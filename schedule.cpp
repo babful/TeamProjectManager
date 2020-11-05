@@ -3,6 +3,15 @@
 
 int month_day[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }; // °¢ ´ÞÀÇ ³¡ ³¯Â¥
 
+
+Schedule::Schedule()
+{
+	this->name = "";
+	this->year = 1900;
+	this->month = 1;
+	this->day = 1;
+}
+
 Schedule::Schedule(string name, int year, int month, int day)
 {
 	assert(year > 0 && (1 <= month && month <= 12) && (1 <= day && day <= month_day[month]));
@@ -38,21 +47,15 @@ int Schedule::getDDay()
 	int* now = getToday();
 	if (now[0] == year && now[1] == month) return day - now[2];
 
-
 	int d_day = 0, yy = now[0], mm = now[1];
 
-	while (1)
+	while (true)
 	{
 		if (++mm > 12) ++yy, mm = 1;
 		if (yy * 12 + mm >= year * 12 + month) break;
 
 		d_day += month_day[mm];
-
-		if (mm == 2)
-		{
-			if (yy % 400 == 0 || (yy % 100 != 0 && yy % 4 == 0)) // À±³â
-				++d_day;
-		}
+		if (mm == 2 && isLeapYear(yy)) ++d_day;  // À±³â 
 	}
 
 	d_day += month_day[now[1]] - now[2] + day;
@@ -71,3 +74,9 @@ int* getToday()
 	now[2] = t.tm_mday;
 	return now;
 } 
+
+bool isLeapYear(int year)
+{
+	if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) return true;
+	return false;
+}
