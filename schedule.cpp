@@ -1,9 +1,21 @@
 #include "schedule.h"
-#include <time.h>
-#include <iostream>
+#include <cassert>
 
-Schedule::Schedule(int year, int month, int day)
+int month_day[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }; // °¢ ´ÞÀÇ ³¡ ³¯Â¥
+
+
+Schedule::Schedule()
 {
+	this->name = "";
+	this->year = 1900;
+	this->month = 1;
+	this->day = 1;
+}
+
+Schedule::Schedule(string name, int year, int month, int day)
+{
+	assert(year > 0 && (1 <= month && month <= 12) && (1 <= day && day <= month_day[month]));
+	this->name = name;
 	this->year = year;
 	this->month = month;
 	this->day = day;
@@ -11,10 +23,14 @@ Schedule::Schedule(int year, int month, int day)
 
 void Schedule::setSchedule(int year, int month, int day)
 {
+	assert(year > 0 && (1 <= month && month <= 12) && (1 <= day && day <= month_day[month]));
 	this->year = year;
 	this->month = month;
 	this->day = day;
 }
+
+void Schedule::setName(string name) { this->name = name; }
+string Schedule::getName() { return name; }
 
 int* Schedule::getSchedule()
 {
@@ -28,33 +44,25 @@ int* Schedule::getSchedule()
 
 int Schedule::getDDay()
 {
-	int mnth[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	int* now = getToday();
-	int d_day = 0;
+	if (now[0] == year && now[1] == month) return day - now[2];
 
-	int yy = now[0], mm = now[1];
+	int d_day = 0, yy = now[0], mm = now[1];
 
-	if (yy == year && mm == month) return day - now[2];
-
-	while (1)
+	while (true)
 	{
 		if (++mm > 12) ++yy, mm = 1;
 		if (yy * 12 + mm >= year * 12 + month) break;
 
-		d_day += mnth[mm];
-
-		if (mm == 2)
-		{
-			if (yy % 400 == 0 || (yy % 100 != 0 && yy % 4 == 0)) // À±³â
-				++d_day;
-		}
+		d_day += month_day[mm];
+		if (mm == 2 && isLeapYear(yy)) ++d_day;  // À±³â 
 	}
 
-	d_day += mnth[now[1]] - now[2] + day;
+	d_day += month_day[now[1]] - now[2] + day;
 	return d_day;
 }
 
-int* Schedule::getToday()
+int* getToday()
 {
 	time_t timer = time(NULL);
 	struct tm t;
@@ -65,4 +73,10 @@ int* Schedule::getToday()
 	now[1] = t.tm_mon + 1;
 	now[2] = t.tm_mday;
 	return now;
+} 
+
+bool isLeapYear(int year)
+{
+	if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) return true;
+	return false;
 }
