@@ -9,16 +9,17 @@ using namespace std;
 class Goal {
 public:
 	Goal();
-	Goal(string context, Schedule deadline, bool clear);
+	Goal(string context, int year, int month, int day, bool clear);
 	void set_Context(string context);
 	string get_Context();
 	void set_Clear(bool clear);
 	bool get_Clear();
-	void set_Deadline(int* cal);
+	void set_Deadline(int year, int month, int day);
 	int* get_Deadline();
+	bool isEndToday();
 
 private:
 	string context;  // 세부목표의 내용
-	Schedule deadline;  // 세부목표의 기한
+	Calendar deadline;  // 세부목표의 기한
 	bool clear;  // 세부목표의 달성 여부
 };

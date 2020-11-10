@@ -2,15 +2,15 @@
 #include <string>
 
 Goal::Goal() {
-	this->context = "";
-	this->deadline = Schedule("", 1900, 1, 1);
-	this->clear = false;
+	set_Context("");
+	this->deadline = Calendar(1900, 1, 1);
+	set_Clear(false);
 }
 
-Goal::Goal(string context, Schedule deadline, bool clear) {
-	this->context = context;
-	this->deadline = deadline;
-	this->clear = clear;
+Goal::Goal(string context, int year, int month, int day, bool clear) {
+	set_Context(context);
+	this->deadline = Calendar(year, month, day);
+	set_Clear(clear);
 }
 
 void Goal::set_Context(string context) {
@@ -29,10 +29,15 @@ bool Goal::get_Clear() {
 	return this->clear;
 }
 
-void Goal::set_Deadline(int *cal) {
-	this->deadline.setSchedule(cal[0], cal[1], cal[2]);
+void Goal::set_Deadline(int year, int month, int day) {
+	deadline.setCalendar(year, month, day);
 }
 
 int* Goal::get_Deadline() {
-	return this->deadline.getSchedule();
+	return deadline.getCalendar();
+}
+
+bool Goal::isEndToday() {
+	if (deadline.getDDay() <= 0) return true;
+	return false;
 }

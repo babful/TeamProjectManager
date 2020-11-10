@@ -1,17 +1,14 @@
 #pragma once
 #include <string>
-#include <time.h>
+#include "calendar.h"
 
 using namespace std;
-
-int* getToday();  // [현재년도, 현재 월, 현재 일]의 int형 배열 반환
-bool isLeapYear(int year);  // year가 윤년이라면 true 반환
 
 class Schedule
 {
 private:
 	string name;
-	int year, month, day;
+	Calendar deadline;
 
 public:
 	Schedule();
