@@ -48,21 +48,39 @@ int Calendar::getDay() const {
 int Calendar::getDDay() const
 {
 	int* now = getToday();
-	if (now[0] * 10000 + now[1] * 100 + now[2] > year * 10000 + month * 100 + day) return -1;  // 이미 지났을 경우 -1 출력
 	if (now[0] == year && now[1] == month) return day - now[2];
-
 	int d_day = 0, yy = now[0], mm = now[1];
 
-	while (true)
-	{
-		if (++mm > 12) ++yy, mm = 1;
-		if (yy * 12 + mm >= year * 12 + month) break;
 
-		d_day += month_day[mm];
-		if (mm == 2 && isLeapYear(yy)) ++d_day;  // 윤년 
+	if (now[0] * 10000 + now[1] * 100 + now[2] > year * 10000 + month * 100 + day) {  // 스케줄이 이미 지났으면
+
+		while (true)
+		{
+			--mm;
+			if (mm < 1) --yy, mm = 12;
+			if (yy * 12 + mm == year * 12 + month) break;
+
+			d_day -= month_day[mm];
+			if (mm == 2 && isLeapYear(yy)) --d_day;  // 윤년 
+		}
+
+		d_day -= month_day[month] - day + now[2];
+	}
+	else {
+
+		while (true)
+		{
+			++mm;
+			if (mm > 12) ++yy, mm = 1;
+			if (yy * 12 + mm == year * 12 + month) break;
+
+			d_day += month_day[mm];
+			if (mm == 2 && isLeapYear(yy)) ++d_day;  // 윤년 
+		}
+
+		d_day += month_day[now[1]] - now[2] + day;
 	}
 
-	d_day += month_day[now[1]] - now[2] + day;
 	return d_day;
 }
 
