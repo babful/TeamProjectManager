@@ -30,3 +30,6 @@ int select_member();
 
 void add_schedule(Team& t);
 void modify_schedule(Team& t, int idx);
+
+bool is_valid_date_input(string date, int* year, int* month, int* day);
+bool is_number(string str);

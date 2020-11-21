@@ -1,6 +1,7 @@
 #include "ui.h"
 #include <iostream>
 #include <conio.h>
+#include <sstream>
 
 using namespace std;
 
@@ -465,9 +466,8 @@ int select_member() {
 
 void add_schedule(Team& t) {
 	while (true) {
-		string name;
+		string name, date;
 		int year = 0, month = 0, day = 0;
-		int month_day[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 		char yn = 0;
 
 		print_schedule_menu();
@@ -476,18 +476,35 @@ void add_schedule(Team& t) {
 		cout << "● 일정 추가";
 		
 		set_text_color(DARK_GRAY, WHITE);
-		gotoxy(6, 18);
-		cout << "□ 내용 : ";
 		gotoxy(6, 21);
 		cout << "□ 마감기한 : ";
 		gotoxy(7, 22);
 		cout << "(입력 예시 : 2020 11 21)";
 
 		cursor_view(true);
-		set_text_color(BLACK, WHITE);
-		gotoxy(6, 18);
-		cout << "□ 내용 : ";
-		getline(cin, name);
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 18);
+			cout << "□ 내용 :                                                                                                        │  │";
+			gotoxy(0, 19);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 18);
+			getline(cin, name);
+
+			if (name.length() < 1) {
+				gotoxy(6, 24);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (50 < name.length()) {
+				gotoxy(6, 24);
+				set_text_color(RED, WHITE);
+				cout << "내용은 최대 50자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
 		gotoxy(6, 18);
 		cout << "■ ";
 		
@@ -496,9 +513,9 @@ void add_schedule(Team& t) {
 			gotoxy(6, 21);
 			cout << "□ 마감기한 :                 ";
 			gotoxy(20, 21);
-			cin >> year >> month >> day;
+			getline(cin, date);
 
-			if (!(0 < month && month < 13 && 0 < day && day <= month_day[month])) {
+			if (!is_valid_date_input(date,&year,&month,&day)) {
 				gotoxy(6, 24);
 				set_text_color(RED, WHITE);
 				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
@@ -511,7 +528,7 @@ void add_schedule(Team& t) {
 		gotoxy(6, 21);
 		cout << "■ ";
 		gotoxy(6, 24);
-		cout << "                                             ";
+		cout << "                                                                    ";
 
 		gotoxy(6, 24);
 		cout << "□ 일정을 추가하시겠습니까? (Y/N) :          ";
@@ -539,9 +556,8 @@ void add_schedule(Team& t) {
 }
 void modify_schedule(Team& t, int idx) {
 	while (true) {
-		string name;
+		string name, date;
 		int year = 0, month = 0, day = 0;
-		int month_day[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 		char yn = 0;
 
 		print_schedule_menu();
@@ -550,18 +566,35 @@ void modify_schedule(Team& t, int idx) {
 		cout << "● 일정 수정";
 
 		set_text_color(DARK_GRAY, WHITE);
-		gotoxy(6, 18);
-		cout << "□ 내용 : ";
 		gotoxy(6, 21);
 		cout << "□ 마감기한 : ";
 		gotoxy(7, 22);
 		cout << "(입력 예시 : 2020 11 21)";
 
 		cursor_view(true);
-		set_text_color(BLACK, WHITE);
-		gotoxy(6, 18);
-		cout << "□ 내용 : ";
-		getline(cin, name);
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 18);
+			cout << "□ 내용 :                                                                                                        │  │";
+			gotoxy(0, 19);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 18);
+			getline(cin, name);
+
+			if (name.length() < 1) {
+				gotoxy(6, 24);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (50 < name.length()) {
+				gotoxy(6, 24);
+				set_text_color(RED, WHITE);
+				cout << "내용은 최대 50자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
 		gotoxy(6, 18);
 		cout << "■ ";
 
@@ -570,9 +603,9 @@ void modify_schedule(Team& t, int idx) {
 			gotoxy(6, 21);
 			cout << "□ 마감기한 :                 ";
 			gotoxy(20, 21);
-			cin >> year >> month >> day;
+			getline(cin, date);
 
-			if (!(0 < month && month < 13 && 0 < day && day <= month_day[month])) {
+			if (!is_valid_date_input(date, &year, &month, &day)) {
 				gotoxy(6, 24);
 				set_text_color(RED, WHITE);
 				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
@@ -585,7 +618,7 @@ void modify_schedule(Team& t, int idx) {
 		gotoxy(6, 21);
 		cout << "■ ";
 		gotoxy(6, 24);
-		cout << "                                             ";
+		cout << "                                                                    ";
 
 		gotoxy(6, 24);
 		cout << "□ 일정을 수정하시겠습니까? (Y/N) :          ";
@@ -611,4 +644,39 @@ void modify_schedule(Team& t, int idx) {
 				continue;
 		}
 	}
+}
+
+bool is_valid_date_input(string date, int* year, int* month, int* day) {
+	vector<string> tokens;
+	string token;
+	stringstream ss(date);
+
+	while (getline(ss, token, ' ')) {
+		tokens.push_back(token);
+	}
+
+	if (tokens.size() != 3) return false;
+
+	if (is_number(tokens[0]))
+		*year = stoi(tokens[0]);
+	else return false;
+
+	if (is_number(tokens[1]))
+		*month = stoi(tokens[1]);
+	else return false;
+
+	if (is_number(tokens[2]))
+		*day = stoi(tokens[2]);
+	else return false;
+
+	return isValidDate(*year, *month, *day);
+}
+bool is_number(string str) {
+	int i = 0;
+	while (i < str.length()) {
+		if (!('0' <= str[i] && str[i] <= '9'))
+			return false;
+		++i;
+	}
+	return true;
 }
