@@ -1,7 +1,7 @@
 #include "team.h"
 #include <iostream>
 
-int main() {
+int main2() {
 	Team t1;
 
 	// 멤버 추가
@@ -10,20 +10,24 @@ int main() {
 	t1.addMember("캡스톤", "2022", "Team Based Learning");
 
 
-	// 스케줄 설정
-	t1.getSchedule().setSchedule(2021, 1, 1);
-	t1.getSchedule().setName("New Year");
+	// 스케줄 추가
+	t1.addSchedule("일요일", 2020, 11, 22);
+	t1.addSchedule("월요일", 2020, 11, 23);
 
+	// 스케줄 설정
+	t1.getSchedule(0).setSchedule(2021, 1, 1);
+	t1.getSchedule(0).setName("New Year");
 
 	// 스케줄 내용 출력
-	cout << "Schedule Name : " << t1.getSchedule().getName() << endl;
-	
-	int* schedule = t1.getSchedule().getSchedule();  // 스케줄 날짜를 얻는 두 가지 방법
-	cout << "Schedule: " << t1.getSchedule().getYear() << " " << t1.getSchedule().getMonth() << " " << t1.getSchedule().getDay() << endl;
-	cout << "Schedule: " << schedule[0] << " " << schedule[1] << " " << schedule[2] << endl;
+	for (int i = 0; i < t1.getScheduleCnt(); ++i) {
+		cout << "Schedule Name : " << t1.getSchedule(i).getName() << endl;
 
-	cout << "D-Day: " << t1.getSchedule().getDDay() << endl << endl;
+		int* schedule = t1.getSchedule(i).getSchedule();  // 스케줄 날짜를 얻는 두 가지 방법
+		cout << "Schedule: " << t1.getSchedule(i).getYear() << " " << t1.getSchedule(i).getMonth() << " " << t1.getSchedule(i).getDay() << endl;
+		cout << "Schedule: " << schedule[0] << " " << schedule[1] << " " << schedule[2] << endl;
 
+		cout << "D-Day: " << t1.getSchedule(i).getDDay() << endl << endl;
+	}
 
 	// 멤버 내용 출력
 	cout << "멤버 수 : " << t1.getMemberCnt() << endl;
@@ -57,9 +61,10 @@ int main() {
 	
 
 	// 가장 급한 목표 출력
-	Goal urgent = t1.getUrgentGoal();
+	/*Goal urgent = t1.getUrgentGoal();
 	cout << "가장 급한 목표" << endl;
 	cout << urgent.get_Context() << " " << urgent.get_Year() << " " << urgent.get_Month() << " " << urgent.get_Day() << endl << endl;
+	*/
 
 
 	t1.getMember(0).sort_Goal();

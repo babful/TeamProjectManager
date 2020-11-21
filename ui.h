@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include "team.h"
 
 enum Colors {
 	BLACK, BLUE, GREEN, CYAN, RED, MAGENTA, BROWN, LIGHT_GRAY, DARK_GRAY,
@@ -16,8 +17,16 @@ void cursor_view(bool show);
 
 void print_outline();
 void print_title();
-void print_graph();
-void print_main_menu();
+void clear_box();
+void print_graph(const Team& t);
+//void print_main_menu(const Team& t);
+void print_schedule(Team& t);
+void print_schedule_menu();
 
 int select_main_menu();
+int select_schedule_menu();
+int select_schedule();
 int select_member();
+
+void add_schedule(Team& t);
+void modify_schedule(Team& t, int idx);

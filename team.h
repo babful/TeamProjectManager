@@ -10,14 +10,20 @@ class Team
 {
 public:
 	teamMember& getMember(int idx);  // 팀 멤버에게 접근
-	Schedule& getSchedule();  // 주 목표에게 접근
+	Schedule& getSchedule(int idx);  // 주 목표에게 접근
 	int getMemberCnt() const;  // 팀의 멤버 수 반환
+	int getScheduleCnt() const; 
 
 	void addMember(string name, string number, string role);
 	int delMember(int idx);
-	Goal getUrgentGoal(); // 가장 기한이 적게 남은 목표 반환
+	void addSchedule(string name, int year, int month, int day);
+	int delSchedule(int idx);
+	int delOldSchedules();
+	void sortSchedule(); // 주 목표들을 D-Day가 적은 순으로 정렬
+	//Goal getUrgentGoal(); // 가장 기한이 적게 남은 목표 반환
 
 private:
 	vector<teamMember> member;
-	Schedule schedule;
+	vector<Schedule> schedules;
+	//Schedule schedule;
 };

@@ -28,6 +28,7 @@ void print_outline() {
 	set_text_color(BLACK, WHITE);
 	cursor_view(false);
 
+	gotoxy(0, 0);
 	cout << "┌";
 	for (int i = 0; i < 121; ++i)
 		cout << "─";
@@ -108,7 +109,34 @@ void print_title() {
 	gotoxy(40, 6);
 	cout << "Team Project Manager";
 }
-void print_graph() {
+void clear_box() {
+	set_text_color(BLACK, WHITE);
+
+	gotoxy(3, 8);
+	cout << "┌";
+	for (int i = 0; i < 115; ++i)
+		cout << "─";
+	cout << "┐";
+
+	for (int i = 9; i < 37; ++i) {
+		gotoxy(3, i);
+		cout << "│";
+		for (int j = 0; j < 115; ++j)
+			cout << " ";
+		cout << "│";
+	}
+
+	gotoxy(3, 37);
+	cout << "└";
+	for (int i = 0; i < 115; ++i)
+		cout << "─";
+	cout << "┘";
+
+	gotoxy(0, 0);
+}
+void print_graph(const Team& t) {
+	clear_box();
+
 	set_text_color(BLACK, WHITE);
 	gotoxy(3, 18);
 	cout << "├";
@@ -179,9 +207,9 @@ void print_graph() {
 	set_text_color(BLACK, WHITE);
 	cout << "남았습니다.";
 }
-void print_main_menu() {
-	print_outline();
-	print_title();
+/*void print_main_menu(const Team& t) {
+	clear_box();
+
 	set_text_color(DARK_GRAY, WHITE);
 
 	gotoxy(7, 10);
@@ -193,7 +221,82 @@ void print_main_menu() {
 	gotoxy(7, 16);
 	cout << "○ 프로그램 종료";
 
-	print_graph();
+	print_graph(t);
+}*/
+void print_schedule(Team& t) {
+	while (true) {
+		clear_box();
+
+		set_text_color(BLACK, WHITE);
+		gotoxy(3, 16);
+		cout << "├";
+		for (int i = 0; i < 115; ++i)
+			cout << "─";
+		cout << "┤ ";
+
+		if (t.getScheduleCnt() == 0) {
+			set_text_color(DARK_GRAY, WHITE);
+			gotoxy(48, 27);
+			cout << "아직 등록된 일정이 없습니다." << endl;
+		}
+		else {
+			t.sortSchedule();
+			for (int i = 0; i < t.getScheduleCnt(); ++i) {
+				if (i == 9)
+					break;
+
+				gotoxy(9, 18 + 2 * i);
+				int dday = t.getSchedule(i).getDDay();
+				if (dday <= 3)
+					set_text_color(RED, WHITE);
+				else
+					set_text_color(BLUE, WHITE);
+				cout << "[D-" << dday << "] ";
+				set_text_color(BLACK, WHITE);
+				cout << t.getSchedule(i).getName() << " (" << t.getSchedule(i).getYear() << "/" <<
+					t.getSchedule(i).getMonth() << "/" << t.getSchedule(i).getDay() << ")";
+			}
+		}
+
+		int menu_num = select_schedule_menu();
+		int schedule_num = 0;
+		switch (menu_num) {
+		case -1:
+			return;
+		case 0:
+			add_schedule(t);
+			break;
+		case 1:
+			schedule_num = select_schedule();
+			if (0 <= schedule_num && schedule_num < t.getScheduleCnt())
+				t.delSchedule(schedule_num);
+			break;
+		case 2:
+			schedule_num = select_schedule();
+			if (0 <= schedule_num && schedule_num < t.getScheduleCnt())
+				modify_schedule(t, schedule_num);
+			break;
+		}
+	}
+}
+void print_schedule_menu() {
+	clear_box();
+
+	set_text_color(DARK_GRAY, WHITE);
+
+	gotoxy(7, 10);
+	cout << "○ 일정 추가";
+	gotoxy(7, 12);
+	cout << "○ 일정 삭제";
+	gotoxy(7, 14);
+	cout << "○ 일정 수정";
+
+	set_text_color(BLACK, WHITE);
+	gotoxy(3, 16);
+	cout << "├";
+	for (int i = 0; i < 115; ++i)
+		cout << "─";
+	cout << "┤ ";
 }
 
 int select_main_menu() {
@@ -202,6 +305,7 @@ int select_main_menu() {
 
 	while (true) {
 		set_text_color(DARK_GRAY, WHITE);
+
 		gotoxy(7, 10);
 		cout << "○ 일정 관리";
 		gotoxy(7, 12);
@@ -245,6 +349,87 @@ int select_main_menu() {
 			return cursor;
 	}
 }
+int select_schedule_menu() {
+	int cursor = 0;
+	int key_input;
+
+	while (true) {
+		set_text_color(DARK_GRAY, WHITE);
+
+		gotoxy(7, 10);
+		cout << "○ 일정 추가";
+		gotoxy(7, 12);
+		cout << "○ 일정 삭제";
+		gotoxy(7, 14);
+		cout << "○ 일정 수정";
+
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 10 + 2 * cursor);
+		switch (cursor) {
+		case 0:
+			cout << "● 일정 추가";
+			break;
+		case 1:
+			cout << "● 일정 삭제";
+			break;
+		case 2:
+			cout << "● 일정 수정";
+			break;
+		}
+
+		key_input = _getch();
+		if (key_input == 224) {
+			switch (_getch()) {
+			case Key::UP:
+				if (cursor > 0)
+					--cursor;
+				break;
+			case Key::DOWN:
+				if (cursor < 2)
+					++cursor;
+				break;
+			}
+		}
+		else if (key_input == Key::ESC)
+			return -1;
+		else if (key_input == Key::ENTER)
+			return cursor;
+	}
+}
+int select_schedule() {
+	int cursor = 0;
+	int key_input;
+
+	set_text_color(BLACK, WHITE);
+
+	while (true) {
+		for (int i = 18; i < 35; i += 2) {
+			gotoxy(6, i);
+			cout << "  ";
+		}
+
+		gotoxy(6, 18 + 2 * cursor);
+		cout << "▶";
+
+		key_input = _getch();
+		if (key_input == 224) {
+			switch (_getch()) {
+			case Key::UP:
+				if (cursor > 0)
+					--cursor;
+				break;
+			case Key::DOWN:
+				if (cursor < 8)
+					++cursor;
+				break;
+			}
+		}
+		else if (key_input == Key::ENTER)
+			return cursor;
+		else if (key_input == Key::ESC)
+			return -1;
+	}
+}
 int select_member() {
 	int cursor = 0;
 	int key_input;
@@ -275,5 +460,155 @@ int select_member() {
 		}
 		else if (key_input == Key::ENTER)
 			return cursor;
+	}
+}
+
+void add_schedule(Team& t) {
+	while (true) {
+		string name;
+		int year = 0, month = 0, day = 0;
+		int month_day[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		char yn = 0;
+
+		print_schedule_menu();
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 10);
+		cout << "● 일정 추가";
+		
+		set_text_color(DARK_GRAY, WHITE);
+		gotoxy(6, 18);
+		cout << "□ 내용 : ";
+		gotoxy(6, 21);
+		cout << "□ 마감기한 : ";
+		gotoxy(7, 22);
+		cout << "(입력 예시 : 2020 11 21)";
+
+		cursor_view(true);
+		set_text_color(BLACK, WHITE);
+		gotoxy(6, 18);
+		cout << "□ 내용 : ";
+		getline(cin, name);
+		gotoxy(6, 18);
+		cout << "■ ";
+		
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 21);
+			cout << "□ 마감기한 :                 ";
+			gotoxy(20, 21);
+			cin >> year >> month >> day;
+
+			if (!(0 < month && month < 13 && 0 < day && day <= month_day[month])) {
+				gotoxy(6, 24);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else
+				break;
+		}
+		set_text_color(BLACK, WHITE);
+		gotoxy(6, 21);
+		cout << "■ ";
+		gotoxy(6, 24);
+		cout << "                                             ";
+
+		gotoxy(6, 24);
+		cout << "□ 일정을 추가하시겠습니까? (Y/N) :          ";
+		while (true) {
+			gotoxy(6, 24);
+			cout << "□ 일정을 추가하시겠습니까? (Y/N) :          ";
+			gotoxy(42, 24);
+			cin >> yn;
+
+			if (yn == 'Y' || yn == 'y') {
+				t.addSchedule(name, year, month, day);
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else if (yn == 'N' || yn == 'n') {
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else
+				continue;
+		}
+	}
+}
+void modify_schedule(Team& t, int idx) {
+	while (true) {
+		string name;
+		int year = 0, month = 0, day = 0;
+		int month_day[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+		char yn = 0;
+
+		print_schedule_menu();
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 14);
+		cout << "● 일정 수정";
+
+		set_text_color(DARK_GRAY, WHITE);
+		gotoxy(6, 18);
+		cout << "□ 내용 : ";
+		gotoxy(6, 21);
+		cout << "□ 마감기한 : ";
+		gotoxy(7, 22);
+		cout << "(입력 예시 : 2020 11 21)";
+
+		cursor_view(true);
+		set_text_color(BLACK, WHITE);
+		gotoxy(6, 18);
+		cout << "□ 내용 : ";
+		getline(cin, name);
+		gotoxy(6, 18);
+		cout << "■ ";
+
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 21);
+			cout << "□ 마감기한 :                 ";
+			gotoxy(20, 21);
+			cin >> year >> month >> day;
+
+			if (!(0 < month && month < 13 && 0 < day && day <= month_day[month])) {
+				gotoxy(6, 24);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else
+				break;
+		}
+		set_text_color(BLACK, WHITE);
+		gotoxy(6, 21);
+		cout << "■ ";
+		gotoxy(6, 24);
+		cout << "                                             ";
+
+		gotoxy(6, 24);
+		cout << "□ 일정을 수정하시겠습니까? (Y/N) :          ";
+		while (true) {
+			gotoxy(6, 24);
+			cout << "□ 일정을 수정하시겠습니까? (Y/N) :          ";
+			gotoxy(42, 24);
+			cin >> yn;
+
+			if (yn == 'Y' || yn == 'y') {
+				t.getSchedule(idx).setName(name);
+				t.getSchedule(idx).setSchedule(year, month, day);
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else if (yn == 'N' || yn == 'n') {
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else
+				continue;
+		}
 	}
 }
