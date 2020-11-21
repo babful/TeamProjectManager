@@ -44,6 +44,8 @@ void teamMember::set_Goal_Clear(int index, bool clear) {
 	GoalList[index].set_Clear(clear);
 	if (clear == true)
 		clearCount++;
+	else
+		clearCount--;
 }
 
 void teamMember::sort_Goal() {

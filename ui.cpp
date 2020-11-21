@@ -109,6 +109,12 @@ void print_title() {
 	set_text_color(DARK_GRAY, WHITE);
 	gotoxy(40, 6);
 	cout << "Team Project Manager";
+
+	//print today's date
+	int* now = getToday();
+	set_text_color(BLACK, WHITE);
+	gotoxy(103, 6);
+	cout << now[0] << "년 " << now[1] << "월 " << now[2] << "일";
 }
 void clear_box() {
 	set_text_color(BLACK, WHITE);
@@ -135,7 +141,7 @@ void clear_box() {
 
 	gotoxy(0, 0);
 }
-void print_graph(const Team& t) {
+void print_graph(Team& t) {
 	clear_box();
 
 	set_text_color(BLACK, WHITE);
@@ -145,85 +151,79 @@ void print_graph(const Team& t) {
 		cout << "─";
 	cout << "┤ ";
 
-	gotoxy(98, 20);
+	gotoxy(98, 19);
 	set_text_color(RED, RED);
 	cout << "  ";
 	set_text_color(BLACK, WHITE);
 	cout << " 목표치";
 
-	gotoxy(109, 20);
+	gotoxy(109, 19);
 	set_text_color(BLUE, BLUE);
 	cout << "  ";
 	set_text_color(BLACK, WHITE);
 	cout << " 달성률";
 
-	// UI 구상을 위해 임의적으로 그래프를 그려넣었음.
-	// 추후 자동으로 달성률을 계산하여 그래프를 나타내는 함수 구현 예정
-	gotoxy(9, 23);
-	cout << "멤버 1 : ";
-	set_text_color(BLUE, BLUE);
-	for (int i = 0; i < 100; ++i)
-		cout << " ";
-	set_text_color(BLUE, WHITE);
-	gotoxy(18, 24);
-	cout << "100% 달성 (10/10)";
+	if (t.getMemberCnt() == 0) {
+		set_text_color(DARK_GRAY, WHITE);
+		gotoxy(48, 27);
+		cout << "아직 등록된 멤버가 없습니다." << endl;
+	}
+	else {
+		double target_percent, clear_percent;
+		string str = " ";
 
-	set_text_color(BLACK, WHITE);
-	gotoxy(9, 26);
-	cout << "멤버 2 : ";
-	set_text_color(BLUE, BLUE);
-	for (int i = 0; i < 100; ++i)
-		cout << " ";
-	set_text_color(BLUE, WHITE);
-	gotoxy(18, 27);
-	cout << "100% 달성 (10/10)";
+		for (int i = 0; i < t.getMemberCnt(); ++i) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(9, 21 + 4 * i);
+			cout << t.getMember(i).get_Name() << " (" << t.getMember(i).get_Number() << ") - " <<
+				t.getMember(i).get_Role();
+			if (t.getMember(i).get_GoalCount() == 0) {
+				target_percent = 0;
+				clear_percent = 0;
+			}
+			else {
+				target_percent = (double)t.getMember(i).today_GoalCount() / t.getMember(i).get_GoalCount() * 100;
+				clear_percent = (double)t.getMember(i).get_ClearCount() / t.getMember(i).get_GoalCount() * 100;
+			}
 
-	set_text_color(BLACK, WHITE);
-	gotoxy(9, 29);
-	cout << "멤버 3 : ";
-	set_text_color(BLUE, BLUE);
-	for (int i = 0; i < 100; ++i)
-		cout << " ";
-	set_text_color(BLUE, WHITE);
-	gotoxy(18, 30);
-	cout << "100% 달성 (10/10)";
+			gotoxy(9, 22 + 4 * i);
+			set_text_color(RED, RED);
+			for (int j = 0; j < (int)target_percent; ++j) {
+				cout << " ";
+			}
+			gotoxy(9, 22 + 4 * i);
+			set_text_color(BLUE, BLUE);
+			for (int j = 0; j < (int)clear_percent; ++j) {
+				cout << " ";
+			}
 
-	set_text_color(BLACK, WHITE);
-	gotoxy(9, 32);
-	cout << "멤버 4 : ";
-	set_text_color(BLUE, BLUE);
-	for (int i = 0; i < 100; ++i)
-		cout << " ";
-	set_text_color(BLUE, WHITE);
-	gotoxy(18, 33);
-	cout << "100% 달성 (10/10)";
+			if (clear_percent < target_percent) {
+				set_text_color(RED, WHITE);
+				str = "분발이 필요해요 :(";
+			}
+			else {
+				set_text_color(BLUE, WHITE);
+				str = "잘하고 있어요 :)";
+			}
+			gotoxy(9, 23 + 4 * i);
+			cout << (int)clear_percent << "% 달성 (" << t.getMember(i).get_ClearCount() << "/" <<
+				t.getMember(i).get_GoalCount() << ") - " << str;
+		}
+	}
 
-	gotoxy(73, 35);
-	set_text_color(BLUE, WHITE);
-	cout << "<중간보고서 제출>";
-	set_text_color(BLACK, WHITE);
-	cout << " 일정까지 ";
-	set_text_color(RED, WHITE);
-	cout << "1일 ";
-	set_text_color(BLACK, WHITE);
-	cout << "남았습니다.";
+	if (t.getScheduleCnt() > 0) {
+		Schedule urgent = t.getSchedule(0);
+		gotoxy(90 - urgent.getName().length(), 35);
+		set_text_color(BLUE, WHITE);
+		cout << "<" << urgent.getName() << ">";
+		set_text_color(BLACK, WHITE);
+		cout << " 일정까지 ";
+		set_text_color(RED, WHITE);
+		cout << urgent.getDDay() << "일 ";
+		set_text_color(BLACK, WHITE);
+		cout << "남았습니다.";
+	}
 }
-/*void print_main_menu(const Team& t) {
-	clear_box();
-
-	set_text_color(DARK_GRAY, WHITE);
-
-	gotoxy(7, 10);
-	cout << "○ 일정 관리";
-	gotoxy(7, 12);
-	cout << "○ 멤버 관리";
-	gotoxy(7, 14);
-	cout << "○ 세부목표 관리";
-	gotoxy(7, 16);
-	cout << "○ 프로그램 종료";
-
-	print_graph(t);
-}*/
 void print_schedule(Team& t) {
 	while (true) {
 		clear_box();
@@ -294,6 +294,140 @@ void print_schedule_menu() {
 
 	set_text_color(BLACK, WHITE);
 	gotoxy(3, 16);
+	cout << "├";
+	for (int i = 0; i < 115; ++i)
+		cout << "─";
+	cout << "┤ ";
+}
+void print_member_menu() {
+	clear_box();
+
+	set_text_color(DARK_GRAY, WHITE);
+
+	gotoxy(7, 10);
+	cout << "○ 멤버 추가";
+	gotoxy(7, 13);
+	cout << "○ 멤버 삭제";
+	gotoxy(7, 16);
+	cout << "○ 멤버 수정";
+
+	set_text_color(BLACK, WHITE);
+	gotoxy(3, 18);
+	cout << "├";
+	for (int i = 0; i < 115; ++i)
+		cout << "─";
+	cout << "┤ ";
+}
+void manage_member(Team& t) {
+	while (true) {
+		print_graph(t);
+
+		int menu_num = select_member_menu();
+		int member_num = 0;
+		switch (menu_num) {
+		case -1:
+			return;
+		case 0:
+			add_member(t);
+			break;
+		case 1:
+			member_num = select_member();
+			if (0 <= member_num && member_num < t.getMemberCnt())
+				t.delMember(member_num);
+			break;
+		case 2:
+			member_num = select_member();
+			if (0 <= member_num && member_num < t.getMemberCnt())
+				modify_member(t, member_num);
+			break;
+		}
+	}
+}
+void print_goal(Team& t, int idx) {
+	while (true) {
+		double target_percent, clear_percent;
+		string str;
+
+		clear_box();
+
+		set_text_color(BLACK, WHITE);
+		gotoxy(3, 18);
+		cout << "├";
+		for (int i = 0; i < 115; ++i)
+			cout << "─";
+		cout << "┤ ";
+
+		if (t.getMember(idx).get_GoalCount() == 0) {
+			set_text_color(DARK_GRAY, WHITE);
+			gotoxy(47, 27);
+			cout << "아직 등록된 세부목표가 없습니다." << endl;
+		}
+		else {
+			t.getMember(idx).sort_Goal();
+			for (int i = 0; i < t.getMember(idx).get_GoalCount(); ++i) {
+				if (i == 9)
+					break;
+
+				if (t.getMember(idx).get_Goal_Clear(i))
+					set_text_color(BLUE, WHITE);
+				else if (t.getMember(idx).get_Goal(i).get_DDay() < 1)
+					set_text_color(RED, WHITE);
+				else
+					set_text_color(BLACK, WHITE);
+
+				string dday = " ";
+				if (t.getMember(idx).get_Goal(i).get_DDay() > 0)
+					dday = "[D-" + to_string(t.getMember(idx).get_Goal(i).get_DDay()) + "] ";
+				else
+					dday = "[D+" + to_string(abs(t.getMember(idx).get_Goal(i).get_DDay())) + "] ";
+
+				gotoxy(9, 20 + 2 * i);
+				int* deadline = t.getMember(idx).get_Goal_deadline(i);
+				cout << dday << t.getMember(idx).get_Goal_Context(i) << " (~" << deadline[0] << "/" <<
+					deadline[1] << "/" << deadline[2] << ")";
+			}
+		}
+
+		int menu_num = select_goal_menu();
+		int goal_num = 0;
+		switch (menu_num) {
+		case -1:
+			return;
+		case 0:
+			add_goal(t, idx);
+			break;
+		case 1:
+			goal_num = select_goal();
+			if (0 <= goal_num && goal_num < t.getMember(idx).get_GoalCount())
+				t.getMember(idx).delete_Goal(goal_num);
+			break;
+		case 2:
+			goal_num = select_goal();
+			if (0 <= goal_num && goal_num < t.getMember(idx).get_GoalCount())
+				modify_goal(t, idx, goal_num);
+			break;
+		case 3:
+			clear_goal(t, idx);
+			break;
+		}
+	}
+}
+void print_goal_menu() {
+	clear_box();
+
+	set_text_color(DARK_GRAY, WHITE);
+
+	gotoxy(7, 10);
+	cout << "○ 세부목표 추가";
+	gotoxy(7, 12);
+	cout << "○ 세부목표 삭제";
+	gotoxy(7, 14);
+	cout << "○ 세부목표 수정";
+	gotoxy(7, 16);
+	cout << "○ 달성 여부 관리";
+
+	set_text_color(BLACK, WHITE);
+	gotoxy(3, 18);
 	cout << "├";
 	for (int i = 0; i < 115; ++i)
 		cout << "─";
@@ -431,6 +565,57 @@ int select_schedule() {
 			return -1;
 	}
 }
+int select_member_menu() {
+	int cursor = 0;
+	int key_input;
+
+	while (true) {
+		set_text_color(DARK_GRAY, WHITE);
+
+		gotoxy(7, 10);
+		cout << "○ 멤버 추가";
+		gotoxy(7, 12);
+		cout << "               ";
+		gotoxy(7, 13);
+		cout << "○ 멤버 삭제";
+		gotoxy(7, 14);
+		cout << "               ";
+		gotoxy(7, 16);
+		cout << "○ 멤버 수정   ";
+
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 10 + 3 * cursor);
+		switch (cursor) {
+		case 0:
+			cout << "● 멤버 추가";
+			break;
+		case 1:
+			cout << "● 멤버 삭제";
+			break;
+		case 2:
+			cout << "● 멤버 수정";
+			break;
+		}
+
+		key_input = _getch();
+		if (key_input == 224) {
+			switch (_getch()) {
+			case Key::UP:
+				if (cursor > 0)
+					--cursor;
+				break;
+			case Key::DOWN:
+				if (cursor < 2)
+					++cursor;
+				break;
+			}
+		}
+		else if (key_input == Key::ESC)
+			return -1;
+		else if (key_input == Key::ENTER)
+			return cursor;
+	}
+}
 int select_member() {
 	int cursor = 0;
 	int key_input;
@@ -438,12 +623,12 @@ int select_member() {
 	set_text_color(BLACK, WHITE);
 
 	while (true) {
-		for (int i = 23; i < 33; i += 3) {
+		for (int i = 21; i < 34; i += 4) {
 			gotoxy(6, i);
 			cout << "  ";
 		}
 
-		gotoxy(6, 23 + 3 * cursor);
+		gotoxy(6, 21 + 4 * cursor);
 		cout << "▶";
 
 		key_input = _getch();
@@ -461,6 +646,94 @@ int select_member() {
 		}
 		else if (key_input == Key::ENTER)
 			return cursor;
+		else if (key_input == Key::ESC)
+			return -1;
+	}
+}
+int select_goal_menu() {
+	int cursor = 0;
+	int key_input;
+
+	while (true) {
+		set_text_color(DARK_GRAY, WHITE);
+
+		gotoxy(7, 10);
+		cout << "○ 세부목표 추가";
+		gotoxy(7, 12);
+		cout << "○ 세부목표 삭제";
+		gotoxy(7, 14);
+		cout << "○ 세부목표 수정";
+		gotoxy(7, 16);
+		cout << "○ 달성 여부 관리";
+
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 10 + 2 * cursor);
+		switch (cursor) {
+		case 0:
+			cout << "● 세부목표 추가";
+			break;
+		case 1:
+			cout << "● 세부목표 삭제";
+			break;
+		case 2:
+			cout << "● 세부목표 수정";
+			break;
+		case 3:
+			cout << "● 달성 여부 관리";
+			break;
+		}
+
+		key_input = _getch();
+		if (key_input == 224) {
+			switch (_getch()) {
+			case Key::UP:
+				if (cursor > 0)
+					--cursor;
+				break;
+			case Key::DOWN:
+				if (cursor < 3)
+					++cursor;
+				break;
+			}
+		}
+		else if (key_input == Key::ENTER)
+			return cursor;
+		else if (key_input == Key::ESC)
+			return -1;
+	}
+}
+int select_goal() {
+	int cursor = 0;
+	int key_input;
+
+	set_text_color(BLACK, WHITE);
+
+	while (true) {
+		for (int i = 20; i < 37; i += 2) {
+			gotoxy(6, i);
+			cout << "  ";
+		}
+
+		gotoxy(6, 20 + 2 * cursor);
+		cout << "▶";
+
+		key_input = _getch();
+		if (key_input == 224) {
+			switch (_getch()) {
+			case Key::UP:
+				if (cursor > 0)
+					--cursor;
+				break;
+			case Key::DOWN:
+				if (cursor < 8)
+					++cursor;
+				break;
+			}
+		}
+		else if (key_input == Key::ENTER)
+			return cursor;
+		else if (key_input == Key::ESC)
+			return -1;
 	}
 }
 
@@ -485,13 +758,15 @@ void add_schedule(Team& t) {
 		while (true) {
 			set_text_color(BLACK, WHITE);
 			gotoxy(6, 18);
-			cout << "□ 내용 :                                                                                                        │  │";
+			cout << "□ 내용 :                                                                                                        │  │ ";
 			gotoxy(0, 19);
 			cout << "│  │                                                                                                           ";
 			gotoxy(16, 18);
 			getline(cin, name);
 
 			if (name.length() < 1) {
+				gotoxy(6, 24);
+				cout << "                                                                    ";
 				gotoxy(6, 24);
 				set_text_color(RED, WHITE);
 				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
@@ -527,11 +802,9 @@ void add_schedule(Team& t) {
 		set_text_color(BLACK, WHITE);
 		gotoxy(6, 21);
 		cout << "■ ";
-		gotoxy(6, 24);
-		cout << "                                                                    ";
 
 		gotoxy(6, 24);
-		cout << "□ 일정을 추가하시겠습니까? (Y/N) :          ";
+		cout << "                                                                    ";
 		while (true) {
 			gotoxy(6, 24);
 			cout << "□ 일정을 추가하시겠습니까? (Y/N) :          ";
@@ -575,13 +848,15 @@ void modify_schedule(Team& t, int idx) {
 		while (true) {
 			set_text_color(BLACK, WHITE);
 			gotoxy(6, 18);
-			cout << "□ 내용 :                                                                                                        │  │";
+			cout << "□ 내용 :                                                                                                        │  │ ";
 			gotoxy(0, 19);
 			cout << "│  │                                                                                                           ";
 			gotoxy(16, 18);
 			getline(cin, name);
 
 			if (name.length() < 1) {
+				gotoxy(6, 24);
+				cout << "                                                                    ";
 				gotoxy(6, 24);
 				set_text_color(RED, WHITE);
 				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
@@ -617,11 +892,9 @@ void modify_schedule(Team& t, int idx) {
 		set_text_color(BLACK, WHITE);
 		gotoxy(6, 21);
 		cout << "■ ";
-		gotoxy(6, 24);
-		cout << "                                                                    ";
 
 		gotoxy(6, 24);
-		cout << "□ 일정을 수정하시겠습니까? (Y/N) :          ";
+		cout << "                                                                    ";
 		while (true) {
 			gotoxy(6, 24);
 			cout << "□ 일정을 수정하시겠습니까? (Y/N) :          ";
@@ -643,6 +916,482 @@ void modify_schedule(Team& t, int idx) {
 			else
 				continue;
 		}
+	}
+}
+void add_member(Team& t) {
+	while (true) {
+		string name, number, role;
+		char yn = 0;
+
+		print_member_menu();
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 10);
+		cout << "● 멤버 추가";
+
+		set_text_color(DARK_GRAY, WHITE);
+		gotoxy(6, 22);
+		cout << "□ 학번 : ";
+		gotoxy(6, 24);
+		cout << "□ 역할 : ";
+
+		cursor_view(true);
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 20);
+			cout << "□ 이름 :                                                                                                        │  │ ";
+			gotoxy(0, 21);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 20);
+			getline(cin, name);
+
+			if (name.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (20 < name.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "이름은 최대 20자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 20);
+		cout << "■ ";
+
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 22);
+			cout << "□ 학번 :                                                                                                        │  │ ";
+			gotoxy(0, 23);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 22);
+			getline(cin, number);
+
+			if (!is_number(number) || number.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (20 < number.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "학번은 최대 20자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 22);
+		cout << "■ ";
+
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 24);
+			cout << "□ 역할 :                                                                                                        │  │ ";
+			gotoxy(0, 25);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 24);
+			getline(cin, role);
+
+			if (role.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (50 < role.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "역할은 최대 50자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 24);
+		cout << "■ ";
+
+		gotoxy(6, 26);
+		cout << "                                                                    ";
+		while (true) {
+			gotoxy(6, 26);
+			cout << "□ 멤버를 추가하시겠습니까? (Y/N) :          ";
+			gotoxy(42, 26);
+			cin >> yn;
+
+			if (yn == 'Y' || yn == 'y') {
+				t.addMember(name, number, role);
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else if (yn == 'N' || yn == 'n') {
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else
+				continue;
+		}
+	}
+}
+void modify_member(Team& t, int idx) {
+	while (true) {
+		string name, number, role;
+		char yn = 0;
+
+		print_member_menu();
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 16);
+		cout << "● 멤버 수정";
+
+		set_text_color(DARK_GRAY, WHITE);
+		gotoxy(6, 22);
+		cout << "□ 학번 : ";
+		gotoxy(6, 24);
+		cout << "□ 역할 : ";
+
+		cursor_view(true);
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 20);
+			cout << "□ 이름 :                                                                                                        │  │ ";
+			gotoxy(0, 21);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 20);
+			getline(cin, name);
+
+			if (name.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (20 < name.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "이름은 최대 20자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 20);
+		cout << "■ ";
+
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 22);
+			cout << "□ 학번 :                                                                                                        │  │ ";
+			gotoxy(0, 23);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 22);
+			getline(cin, number);
+
+			if (!is_number(number) || number.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (20 < number.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "학번은 최대 20자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 22);
+		cout << "■ ";
+
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 24);
+			cout << "□ 역할 :                                                                                                        │  │ ";
+			gotoxy(0, 25);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 24);
+			getline(cin, role);
+
+			if (role.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (50 < role.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "역할은 최대 50자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 24);
+		cout << "■ ";
+
+		gotoxy(6, 26);
+		cout << "                                                                    ";
+		while (true) {
+			gotoxy(6, 26);
+			cout << "□ 멤버를 수정하시겠습니까? (Y/N) :          ";
+			gotoxy(42, 26);
+			cin >> yn;
+
+			if (yn == 'Y' || yn == 'y') {
+				t.getMember(idx).set_Name(name);
+				t.getMember(idx).set_Number(number);
+				t.getMember(idx).set_Role(role);
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else if (yn == 'N' || yn == 'n') {
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else
+				continue;
+		}
+	}
+}
+void add_goal(Team& t, int member_idx) {
+	while (true) {
+		string name, date;
+		int year = 0, month = 0, day = 0;
+		char yn = 0;
+
+		print_goal_menu();
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 10);
+		cout << "● 세부목표 추가";
+
+		set_text_color(DARK_GRAY, WHITE);
+		gotoxy(6, 23);
+		cout << "□ 마감기한 : ";
+		gotoxy(7, 24);
+		cout << "(입력 예시 : 2020 11 21)";
+
+		cursor_view(true);
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 20);
+			cout << "□ 내용 :                                                                                                        │  │ ";
+			gotoxy(0, 21);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 20);
+			getline(cin, name);
+
+			if (name.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (50 < name.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "내용은 최대 50자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 20);
+		cout << "■ ";
+
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 23);
+			cout << "□ 마감기한 :                 ";
+			gotoxy(20, 23);
+			getline(cin, date);
+
+			if (!is_valid_date_input(date, &year, &month, &day)) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else
+				break;
+		}
+		set_text_color(BLACK, WHITE);
+		gotoxy(6, 23);
+		cout << "■ ";
+
+		gotoxy(6, 26);
+		cout << "                                                                    ";
+		while (true) {
+			gotoxy(6, 26);
+			cout << "□ 세부목표를 추가하시겠습니까? (Y/N) :          ";
+			gotoxy(46, 26);
+			cin >> yn;
+
+			if (yn == 'Y' || yn == 'y') {
+				t.getMember(member_idx).add_Goal(Goal(name, year, month, day));
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else if (yn == 'N' || yn == 'n') {
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else
+				continue;
+		}
+	}
+}
+void modify_goal(Team& t, int member_idx, int goal_idx) {
+	while (true) {
+		string name, date;
+		int year = 0, month = 0, day = 0;
+		char yn = 0;
+
+		print_goal_menu();
+		set_text_color(BLACK, WHITE);
+		gotoxy(7, 14);
+		cout << "● 세부목표 수정";
+
+		set_text_color(DARK_GRAY, WHITE);
+		gotoxy(6, 23);
+		cout << "□ 마감기한 : ";
+		gotoxy(7, 24);
+		cout << "(입력 예시 : 2020 11 21)";
+
+		cursor_view(true);
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 20);
+			cout << "□ 내용 :                                                                                                        │  │ ";
+			gotoxy(0, 21);
+			cout << "│  │                                                                                                           ";
+			gotoxy(16, 20);
+			getline(cin, name);
+
+			if (name.length() < 1) {
+				gotoxy(6, 26);
+				cout << "                                                                    ";
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else if (50 < name.length()) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "내용은 최대 50자까지만 입력할 수 있습니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else break;
+		}
+		gotoxy(6, 20);
+		cout << "■ ";
+
+		while (true) {
+			set_text_color(BLACK, WHITE);
+			gotoxy(6, 23);
+			cout << "□ 마감기한 :                 ";
+			gotoxy(20, 23);
+			getline(cin, date);
+
+			if (!is_valid_date_input(date, &year, &month, &day)) {
+				gotoxy(6, 26);
+				set_text_color(RED, WHITE);
+				cout << "유효하지 않은 입력입니다. 다시 입력해 주세요.";
+				continue;
+			}
+			else
+				break;
+		}
+		set_text_color(BLACK, WHITE);
+		gotoxy(6, 23);
+		cout << "■ ";
+
+		gotoxy(6, 26);
+		cout << "                                                                    ";
+		while (true) {
+			gotoxy(6, 26);
+			cout << "□ 세부목표를 수정하시겠습니까? (Y/N) :          ";
+			gotoxy(46, 26);
+			cin >> yn;
+
+			if (yn == 'Y' || yn == 'y') {
+				t.getMember(member_idx).get_Goal(goal_idx).set_Context(name);
+				t.getMember(member_idx).get_Goal(goal_idx).set_Deadline(year, month, day);
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else if (yn == 'N' || yn == 'n') {
+				cursor_view(false);
+				getchar();
+				return;
+			}
+			else
+				continue;
+		}
+	}
+}
+void clear_goal(Team& t, int idx) {
+	int cursor = 0;
+	int key_input;
+	bool change[9];
+	memset(change, false, 9);
+
+	set_text_color(BLACK, WHITE);
+
+	while (true) {
+		for (int i = 0; i < 9; ++i) {
+			gotoxy(6, 20 + 2 * i);
+			if (change[i])
+				cout << " *";
+			else
+				cout << "  ";
+		}
+
+		gotoxy(6, 20 + 2 * cursor);
+		cout << "▶";
+
+		key_input = _getch();
+		if (key_input == 224) {
+			switch (_getch()) {
+			case Key::UP:
+				if (cursor > 0)
+					--cursor;
+				break;
+			case Key::DOWN:
+				if (cursor < 8)
+					++cursor;
+				break;
+			}
+		}
+		else if (key_input == 's' || key_input == 'S') {
+			if (cursor < t.getMember(idx).get_GoalCount()) {
+				t.getMember(idx).set_Goal_Clear(cursor, !t.getMember(idx).get_Goal_Clear(cursor));
+				change[cursor] = !change[cursor];
+			}
+		}
+		else if (key_input == Key::ESC || key_input == Key::ENTER)
+			return;
 	}
 }
 

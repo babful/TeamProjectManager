@@ -20,10 +20,8 @@ public:
 	int delSchedule(int idx);
 	int delOldSchedules();
 	void sortSchedule(); // 주 목표들을 D-Day가 적은 순으로 정렬
-	//Goal getUrgentGoal(); // 가장 기한이 적게 남은 목표 반환
 
 private:
 	vector<teamMember> member;
 	vector<Schedule> schedules;
-	//Schedule schedule;
 };
