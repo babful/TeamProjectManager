@@ -4,6 +4,7 @@
 
 int* getToday();  // [현재년도, 현재 월, 현재 일]의 int형 배열 반환
 bool isLeapYear(int year);  // year가 윤년이라면 true 반환
+bool isValidDate(int year, int month, int day);
 
 
 class Calendar
