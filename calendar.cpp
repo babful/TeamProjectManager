@@ -10,14 +10,14 @@ Calendar::Calendar() {
 }
 
 Calendar::Calendar(int year, int month, int day) {
+	assert(isValidDate(year, month, day));
 	this->year = year;
 	this->month = month;
 	this->day = day;
 }
 
-void Calendar::setCalendar(int year, int month, int day)
-{
-	assert(year > 0 && (1 <= month && month <= 12) && (1 <= day && day <= month_day[month]));
+void Calendar::setCalendar(int year, int month, int day) {
+	assert(isValidDate(year, month, day));
 	this->year = year;
 	this->month = month;
 	this->day = day;
@@ -84,6 +84,25 @@ int* getToday()
 
 bool isLeapYear(int year)
 {
+	if (year < 1) return false;
 	if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0) return true;
 	return false;
+}
+
+bool isValidDate(int year, int month, int day) {
+	if (year < 1) return false;
+	if (month < 1 || month > 12) return false;
+
+	if (month == 2) {
+		int limit = 28;
+		if (isLeapYear(year)) ++limit;
+
+		if (day < 1 || day > limit) return false;
+		else return true;
+	}
+
+	else {
+		if (day < 1 || day > month_day[month]) return false;
+		return true;
+	}
 }
