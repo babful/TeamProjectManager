@@ -8,9 +8,9 @@ class Schedule
 {
 public:
 	Schedule();
-	Schedule(string name, int year, int month, int day);
+	Schedule(const string& name, int year, int month, int day);
 	void setSchedule(int year, int month, int day); // 스케줄의 날짜 설정
-	void setName(string name);  // 스케줄의 이름 설정
+	void setName(const string& name);  // 스케줄의 이름 설정
 	string getName() const;  // 스케줄의 이름 반환
 	int getYear() const;
 	int getMonth() const;

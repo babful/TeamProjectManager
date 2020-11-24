@@ -42,5 +42,5 @@ void add_goal(Team& t, int member_idx);
 void modify_goal(Team& t, int member_idx, int goal_idx);
 void clear_goal(Team& t, int idx);
 
-bool is_valid_date_input(string date, int* year, int* month, int* day);
-bool is_number(string str);
+bool is_valid_date_input(const string& date, int* year, int* month, int* day);
+bool is_number(const string& str);
