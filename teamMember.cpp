@@ -10,7 +10,7 @@ teamMember::teamMember() {
 	this->goalCount = 0;
 }
 
-teamMember::teamMember(string Student_Name, string Student_Number, string Role) {
+teamMember::teamMember(const string& Student_Name, const string& Student_Number, const string& Role) {
 	this->Student_Name = Student_Name;
 	this->Student_Number = Student_Number;
 	this->Role = Role;
@@ -18,19 +18,19 @@ teamMember::teamMember(string Student_Name, string Student_Number, string Role) 
 	this->goalCount = 0;
 }
 
-void teamMember::set_Name(string Student_Name) {
+void teamMember::set_Name(const string& Student_Name) {
 	this->Student_Name = Student_Name;
 }
 
-void teamMember::set_Number(string Student_Number) {
+void teamMember::set_Number(const string& Student_Number) {
 	this->Student_Number = Student_Number;
 }
 
-void teamMember::set_Role(string Role) {
+void teamMember::set_Role(const string& Role) {
 	this->Role = Role;
 }
 
-void teamMember::add_Goal(Goal Goal) {
+void teamMember::add_Goal(const Goal& Goal) {
 	GoalList.push_back(Goal);
 	goalCount++;
 }
@@ -46,6 +46,10 @@ void teamMember::set_Goal_Clear(int index, bool clear) {
 		clearCount++;
 	else
 		clearCount--;
+}
+
+void teamMember::set_ClearCount(int index) {
+	this->clearCount = index;
 }
 
 void teamMember::sort_Goal() {
@@ -73,18 +77,6 @@ int teamMember::today_GoalCount() const {
 
 string teamMember::get_Goal_Context(int index) const {
 	return GoalList[index].get_Context();
-}
-
-int teamMember::get_Goal_deadline_Year(int index) const {
-	return GoalList[index].get_Year();
-}
-
-int teamMember::get_Goal_deadline_Month(int index) const {
-	return GoalList[index].get_Month();
-}
-
-int teamMember::get_Goal_deadline_Day(int index) const {
-	return GoalList[index].get_Day();
 }
 
 int* teamMember::get_Goal_deadline(int index) const {
@@ -117,33 +109,4 @@ string teamMember::get_Role() const {
 
 Goal& teamMember::get_Goal(int index) {
 	return GoalList[index];
-}
-
-Goal teamMember::get_Urgent_Goal() {
-	if (GoalList.size() == 0) return Goal();  // 예외처리
-
-	vector<Goal>::iterator it;
-	int min = GoalList[0].get_DDay(), idx = 0;
-
-	for (it = GoalList.begin() + 1; it != GoalList.end(); ++it) {
-		if (it->get_Clear() == false) {
-			int dday = it->get_DDay();
-
-			if (dday != -1 && dday < min) {
-				min = dday;
-				idx = it - GoalList.begin();
-			}
-		}
-	}
-	return GoalList.at(idx);
-}
-
-int teamMember::findGoal(string context) {
-	vector<Goal>::iterator it;
-	for (it = GoalList.begin(); it != GoalList.end(); ++it) {
-		if (it->get_Context() == context) {
-			return it - GoalList.begin();
-		}
-	}
-	return -1;  // Failed to find
 }
