@@ -9,7 +9,7 @@ Schedule::Schedule()
 	deadline.setCalendar(1900, 1, 1);
 }
 
-Schedule::Schedule(string name, int year, int month, int day)
+Schedule::Schedule(const string& name, int year, int month, int day)
 {
 	this->name = name;
 	deadline.setCalendar(year, month, day);
@@ -19,7 +19,7 @@ void Schedule::setSchedule(int year, int month, int day) {
 	deadline.setCalendar(year, month, day);
 }
 
-void Schedule::setName(string name) {
+void Schedule::setName(const string& name) {
 	this->name = name;
 }
 

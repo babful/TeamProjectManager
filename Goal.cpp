@@ -7,19 +7,19 @@ Goal::Goal() {
 	this->clear = false;
 }
 
-Goal::Goal(string context, int year, int month, int day) {
+Goal::Goal(const string& context, int year, int month, int day) {
 	this->context = context;
 	this->deadline = Calendar(year, month, day);
 	this->clear = false;
 }
 
-Goal::Goal(string context, int year, int month, int day, bool clear) {
+Goal::Goal(const string& context, int year, int month, int day, bool clear) {
 	this->context = context;
 	this->deadline = Calendar(year, month, day);
 	this->clear = clear;
 }
 
-void Goal::set_Context(string context) {
+void Goal::set_Context(const string& context) {
 	this->context = context;
 }
 
@@ -41,18 +41,6 @@ void Goal::set_Deadline(int year, int month, int day) {
 
 int* Goal::get_Deadline() const {
 	return deadline.getCalendar();
-}
-
-int Goal::get_Year() const {
-	return deadline.getYear();
-}
-
-int Goal::get_Month() const {
-	return deadline.getMonth();
-}
-
-int Goal::get_Day() const {
-	return deadline.getDay();
 }
 
 int Goal::get_DDay() const {

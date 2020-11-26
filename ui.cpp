@@ -170,7 +170,6 @@ void print_graph(Team& t) {
 	}
 	else {
 		double target_percent, clear_percent;
-		string str = " ";
 
 		for (int i = 0; i < t.getMemberCnt(); ++i) {
 			set_text_color(BLACK, WHITE);
@@ -196,6 +195,8 @@ void print_graph(Team& t) {
 			for (int j = 0; j < (int)clear_percent; ++j) {
 				cout << " ";
 			}
+
+			string str;
 
 			if (clear_percent < target_percent) {
 				set_text_color(RED, WHITE);
@@ -345,9 +346,6 @@ void manage_member(Team& t) {
 }
 void print_goal(Team& t, int idx) {
 	while (true) {
-		double target_percent, clear_percent;
-		string str;
-
 		clear_box();
 
 		set_text_color(BLACK, WHITE);
@@ -436,7 +434,6 @@ void print_goal_menu() {
 
 int select_main_menu() {
 	int cursor = 0;
-	int key_input;
 
 	while (true) {
 		set_text_color(DARK_GRAY, WHITE);
@@ -467,7 +464,7 @@ int select_main_menu() {
 			break;
 		}
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -486,7 +483,6 @@ int select_main_menu() {
 }
 int select_schedule_menu() {
 	int cursor = 0;
-	int key_input;
 
 	while (true) {
 		set_text_color(DARK_GRAY, WHITE);
@@ -512,7 +508,7 @@ int select_schedule_menu() {
 			break;
 		}
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -533,7 +529,6 @@ int select_schedule_menu() {
 }
 int select_schedule() {
 	int cursor = 0;
-	int key_input;
 
 	set_text_color(BLACK, WHITE);
 
@@ -546,7 +541,7 @@ int select_schedule() {
 		gotoxy(6, 18 + 2 * cursor);
 		cout << "¢º";
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -567,7 +562,6 @@ int select_schedule() {
 }
 int select_member_menu() {
 	int cursor = 0;
-	int key_input;
 
 	while (true) {
 		set_text_color(DARK_GRAY, WHITE);
@@ -597,7 +591,7 @@ int select_member_menu() {
 			break;
 		}
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -618,7 +612,6 @@ int select_member_menu() {
 }
 int select_member() {
 	int cursor = 0;
-	int key_input;
 	
 	set_text_color(BLACK, WHITE);
 
@@ -631,7 +624,7 @@ int select_member() {
 		gotoxy(6, 21 + 4 * cursor);
 		cout << "¢º";
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -652,7 +645,6 @@ int select_member() {
 }
 int select_goal_menu() {
 	int cursor = 0;
-	int key_input;
 
 	while (true) {
 		set_text_color(DARK_GRAY, WHITE);
@@ -683,7 +675,7 @@ int select_goal_menu() {
 			break;
 		}
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -704,7 +696,6 @@ int select_goal_menu() {
 }
 int select_goal() {
 	int cursor = 0;
-	int key_input;
 
 	set_text_color(BLACK, WHITE);
 
@@ -717,7 +708,7 @@ int select_goal() {
 		gotoxy(6, 20 + 2 * cursor);
 		cout << "¢º";
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -1353,7 +1344,6 @@ void modify_goal(Team& t, int member_idx, int goal_idx) {
 }
 void clear_goal(Team& t, int idx) {
 	int cursor = 0;
-	int key_input;
 	bool change[9];
 	memset(change, false, 9);
 
@@ -1371,7 +1361,7 @@ void clear_goal(Team& t, int idx) {
 		gotoxy(6, 20 + 2 * cursor);
 		cout << "¢º";
 
-		key_input = _getch();
+		int key_input = _getch();
 		if (key_input == 224) {
 			switch (_getch()) {
 			case Key::UP:
@@ -1395,7 +1385,7 @@ void clear_goal(Team& t, int idx) {
 	}
 }
 
-bool is_valid_date_input(string date, int* year, int* month, int* day) {
+bool is_valid_date_input(const string& date, int* year, int* month, int* day) {
 	vector<string> tokens;
 	string token;
 	stringstream ss(date);
@@ -1420,12 +1410,12 @@ bool is_valid_date_input(string date, int* year, int* month, int* day) {
 
 	return isValidDate(*year, *month, *day);
 }
-bool is_number(string str) {
-	int i = 0;
-	while (i < str.length()) {
+bool is_number(const string& str) {
+	int len = str.length();
+	for (int i = 0; i < len; ++i) {
 		if (!('0' <= str[i] && str[i] <= '9'))
 			return false;
-		++i;
 	}
+
 	return true;
 }
