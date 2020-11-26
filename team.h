@@ -20,7 +20,8 @@ public:
 	int delSchedule(int idx);
 	int delOldSchedules();
 	void sortSchedule(); // 주 목표들을 D-Day가 적은 순으로 정렬
-
+	bool load(string filename); // 파일 불러오기
+	bool save(string filename); // 파일 저장하기
 private:
 	vector<teamMember> member;
 	vector<Schedule> schedules;
