@@ -7,6 +7,8 @@ int main() {
 
 	Team t;
 
+	t.load("TPM_Data.txt"); //TPM_Data.txt 파일 불러오기
+
 	print_outline();
 	print_title();
 	while (true) {
@@ -27,6 +29,7 @@ int main() {
 				print_goal(t, member_num);
 			break;
 		case 3:
+			t.save("TPM_Data.txt"); //TPM_Data.txt 파일에 저장
 			return 0;
 		}
 	}
