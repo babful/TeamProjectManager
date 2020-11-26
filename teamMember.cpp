@@ -48,6 +48,10 @@ void teamMember::set_Goal_Clear(int index, bool clear) {
 		clearCount--;
 }
 
+void teamMember::set_ClearCount(int index) {
+	this->clearCount = index;
+}
+
 void teamMember::sort_Goal() {
 	int size = GoalList.size();
 	// 버블정렬, 후에 더 나은 알고리즘으로 변경 필요

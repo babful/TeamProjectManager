@@ -75,7 +75,6 @@ bool Team::load(string filename) // 파일 읽어오기
 		getline(ifs, Role);
 		this->addMember(Student_Name, Student_Number, Role);
 		ifs >> clearCount;
-
 		ifs.ignore(100, '\n');
 		ifs >> goalCount;
 		ifs.ignore(100, '\n');
@@ -97,6 +96,8 @@ bool Team::load(string filename) // 파일 읽어오기
 			this->getMember(m).set_Goal_Clear(g, clear);
 			ifs.ignore(100, '\n');
 		}
+
+		this->getMember(m).set_ClearCount(clearCount);
 	}
 
 	int schedulecount;
@@ -140,10 +141,13 @@ bool Team::save(string filename) // 파일 저장하기
 
 		for (int g = 0; g < member[m].get_GoalCount(); g++)
 		{
+			int* deadline = member[m].get_Goal_deadline(g);
+
 			ofs << member[m].get_Goal(g).get_Context() << endl;
-			ofs << member[m].get_Goal(g).get_Year() << " ";
-			ofs << member[m].get_Goal(g).get_Month() << " ";
-			ofs << member[m].get_Goal(g).get_Day() << endl;
+			ofs << deadline[0] << " ";
+			ofs << deadline[1] << " ";
+			ofs << deadline[2] << endl;
+
 			int clear = member[m].get_Goal(g).get_Clear();
 			ofs << clear << endl;
 		}

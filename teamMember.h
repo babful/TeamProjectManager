@@ -19,6 +19,7 @@ public:
 	void delete_Goal(int index);
 	void sort_Goal();
 	void set_Goal_Clear(int index, bool clear);
+	void set_ClearCount(int index);
 	string get_Name() const;
 	string get_Number() const;
 	string get_Role() const;
