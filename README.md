@@ -29,7 +29,7 @@
 
 ## 설치
 -------------
-### (구글 드라이브 URL 첨부 예정)
+### https://drive.google.com/file/d/15ehmpeGa-F_BCIfyEcw1JHRNE29MCVXH/view?usp=sharing
 #### 상단의 구글 드라이브 링크에 들어가 **'TPM_Setup.msi'** 파일을 다운로드한 뒤, 실행하면 프로그램 설치가 진행됩니다. 설치가 완료된 후, 설치 폴더로 들어가 TeamProjectManager.exe 파일을 실행하면 프로그램을 사용할 수 있습니다.
 #### __관리자 권한이 필요한 경로(예: Program Files (x86))__ 에 설치 시 데이터 저장이 되지 않습니다. 따라서 프로그램 설치 경로를 적절하게 설정하여 주시길 바랍니다.
 ## 사용 방법
