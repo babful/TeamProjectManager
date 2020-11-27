@@ -1,7 +1,5 @@
 #include "ui.h"
 
-using namespace std;
-
 int main() {
 	system("mode con cols=124 lines=40 | title Team Project Manager"); // 콘솔 창의 크기 조절 및 타이틀 설정
 

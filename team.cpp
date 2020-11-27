@@ -1,6 +1,8 @@
 #include "team.h"
 #include <cassert>
 #include <fstream>
+#include <algorithm>
+
 using namespace std;
 
 teamMember& Team::getMember(int idx) { return members.at(idx); }
@@ -37,19 +39,6 @@ void Team::delOldSchedules() {
 	for (int i = 0; i < size; ++i) {
 		if (schedules[i].getDDay() < 0)
 			schedules.erase(schedules.begin() + i);
-	}
-}
-
-void Team::sortSchedule() {
-	delOldSchedules();
-
-	int size = schedules.size();
-	for (int i = 0; i < size - 1; i++) {
-		for (int j = 0; j < size - 1 - i; j++) {
-			if (schedules[j].getDDay() > schedules[j + 1].getDDay()) {
-				swap(schedules[j], schedules[j + 1]);
-			}
-		}
 	}
 }
 
@@ -144,4 +133,13 @@ bool Team::save(const string& filename) // 파일 저장하기
 
 	ofs.close();
 	return true;
+}
+
+void Team::sortSchedule() {
+	delOldSchedules();
+	sort(schedules.begin(), schedules.end(), compare_Schedule);
+}
+
+bool compare_Schedule(Schedule g1, Schedule g2) {
+	return g1.getDDay() < g2.getDDay();
 }

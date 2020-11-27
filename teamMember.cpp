@@ -1,6 +1,6 @@
 #include "teamMember.h"
 #include <string>
-#include <iostream>
+#include <algorithm>
 
 teamMember::teamMember() {
 	this->Student_Name = "";
@@ -52,18 +52,6 @@ void teamMember::set_ClearCount(int index) {
 	this->clearCount = index;
 }
 
-void teamMember::sort_Goal() {
-	int size = GoalList.size();
-	// 버블정렬, 후에 더 나은 알고리즘으로 변경 필요
-	for (int i = 0; i < size - 1; i++) {  
-		for (int j = 0; j < size - 1 - i; j++) {
-			if (GoalList[j].get_DDay() > GoalList[j + 1].get_DDay()) {
-				swap(GoalList[j], GoalList[j + 1]);
-			}
-		}
-	}
-}
-
 int teamMember::today_GoalCount() const {
 	int today_goalCount = 0;
 	int size = GoalList.size();
@@ -109,4 +97,12 @@ string teamMember::get_Role() const {
 
 Goal& teamMember::get_Goal(int index) {
 	return GoalList[index];
+}
+
+void teamMember::sort_Goal() {
+	std::sort(GoalList.begin(), GoalList.end(), compare_Goal);
+}
+
+bool compare_Goal(Goal g1, Goal g2) {
+	return g1.get_DDay() < g2.get_DDay();
 }

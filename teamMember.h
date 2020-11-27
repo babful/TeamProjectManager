@@ -17,7 +17,6 @@ public:
 	void set_Role(const string& Role);
 	void add_Goal(const Goal& Goal);
 	void delete_Goal(int index);
-	void sort_Goal();
 	void set_Goal_Clear(int index, bool clear);
 	void set_ClearCount(int index);
 	string get_Name() const;
@@ -30,6 +29,7 @@ public:
 	int get_GoalCount() const;  // 전체 세부목표 개수 반환
 	int get_ClearCount() const;  // 완료한 세부목표 개수 반환
 	int today_GoalCount() const; //기한이 오늘까지인 목표 개수 반환
+	void sort_Goal(); // 세부목표를 D-Day가 작은 순으로 정렬
 
 private:
 	string Student_Name;
@@ -39,3 +39,5 @@ private:
 	int goalCount; //목표 개수
 	vector<Goal> GoalList;
 };
+
+bool compare_Goal(Goal g1, Goal g2); // sort_Goal 함수의 정렬 기준
