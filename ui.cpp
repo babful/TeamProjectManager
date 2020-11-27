@@ -215,6 +215,7 @@ void print_graph(Team& t) {
 		}
 	}
 
+	t.sortSchedule();
 	if (t.getScheduleCnt() > 0) { // 가장 가까운 주요일정의 D-Day 출력
 		Schedule urgent = t.getSchedule(0);
 		gotoxy(90 - urgent.getName().length(), 35);
@@ -246,9 +247,9 @@ void manage_schedule(Team& t) {
 			cout << "아직 등록된 일정이 없습니다." << endl;
 		}
 		else {
+			t.sortSchedule();
 			int scheduleCnt = t.getScheduleCnt();
 
-			t.sortSchedule();
 			for (int i = 0; i < scheduleCnt; ++i) { // 일정 목록 출력
 				if (i == 9)
 					break;
@@ -364,6 +365,7 @@ void manage_goal(Team& t, int idx) {
 			cout << "─";
 		cout << "┤ ";
 
+		t.getMember(idx).sort_Goal();
 		teamMember member = t.getMember(idx);
 
 		if (member.get_GoalCount() == 0) {
@@ -372,7 +374,6 @@ void manage_goal(Team& t, int idx) {
 			cout << "아직 등록된 세부목표가 없습니다." << endl;
 		}
 		else {
-			member.sort_Goal();
 			int goalCnt = member.get_GoalCount();
 			for (int i = 0; i < goalCnt; ++i) { // 세부목표 목록 출력
 				if (i == 9)

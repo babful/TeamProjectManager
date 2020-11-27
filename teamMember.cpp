@@ -32,20 +32,22 @@ void teamMember::set_Role(const string& Role) {
 
 void teamMember::add_Goal(const Goal& Goal) {
 	GoalList.push_back(Goal);
-	goalCount++;
+	++goalCount;
 }
 
 void teamMember::delete_Goal(int index) {
+	if (get_Goal_Clear(index))
+		--clearCount;
 	GoalList.erase(GoalList.begin() + index);
-	goalCount--;
+	--goalCount;
 }
 
 void teamMember::set_Goal_Clear(int index, bool clear) {
 	GoalList[index].set_Clear(clear);
 	if (clear == true)
-		clearCount++;
+		++clearCount;
 	else
-		clearCount--;
+		--clearCount;
 }
 
 void teamMember::set_ClearCount(int index) {

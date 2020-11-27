@@ -35,10 +35,13 @@ void Team::delSchedule(int idx) {
 }
 
 void Team::delOldSchedules() {
-	int size = schedules.size();
-	for (int i = 0; i < size; ++i) {
-		if (schedules[i].getDDay() < 0)
+	int i = 0;
+	while (i < schedules.size()) {
+		if (schedules[i].getDDay() < 0) {
 			schedules.erase(schedules.begin() + i);
+			continue;
+		}
+		++i;
 	}
 }
 
@@ -140,6 +143,6 @@ void Team::sortSchedule() {
 	sort(schedules.begin(), schedules.end(), compare_Schedule);
 }
 
-bool compare_Schedule(Schedule g1, Schedule g2) {
-	return g1.getDDay() < g2.getDDay();
+bool compare_Schedule(Schedule s1, Schedule s2) {
+	return s1.getDDay() < s2.getDDay();
 }

@@ -28,4 +28,4 @@ private:
 	vector<Schedule> schedules;
 };
 
-bool compare_Schedule(Schedule g1, Schedule g2); // sortSchedule 함수의 정렬 기준
+bool compare_Schedule(Schedule s1, Schedule s2); // sortSchedule 함수의 정렬 기준
