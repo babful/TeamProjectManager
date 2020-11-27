@@ -1,23 +1,26 @@
 #include "team.h"
 #include <cassert>
-#include <iostream>   
 #include <fstream>
 using namespace std;
 
-teamMember& Team::getMember(int idx) { return member.at(idx); }
+teamMember& Team::getMember(int idx) { return members.at(idx); }
 Schedule& Team::getSchedule(int idx) { return schedules.at(idx); }
 
-int Team::getMemberCnt() const { return member.size(); }
+int Team::getMemberCnt() const { return members.size(); }
 int Team::getScheduleCnt() const { return schedules.size(); }
 
+void Team::addMember(const teamMember& member) {
+	this->members.push_back(member);
+}
+
 void Team::addMember(const string& name, const string& number, const string& role) {
-	member.push_back(teamMember(name, number, role));
+	members.push_back(teamMember(name, number, role));
 }
 
 void Team::delMember(int idx)
 {
-	assert(idx < member.size()); // Index Error
-	member.erase(member.begin() + idx);
+	assert(idx < members.size()); // Index Error
+	members.erase(members.begin() + idx);
 }
 
 void Team::addSchedule(const string& name, int year, int month, int day) {
@@ -50,66 +53,50 @@ void Team::sortSchedule() {
 	}
 }
 
-bool Team::load(string filename) // 파일 읽어오기
+bool Team::load(const string& filename) // 파일 읽어오기
 {
-
 	ifstream ifs(filename, ifstream::in);
-
 	if (!ifs.good())
 		return false;
 
 	int membercount;
 	ifs >> membercount;
 	ifs.ignore(100, '\n');
-	for (int m = 0; m < membercount; m++)
-	{
-		string Student_Name;
-		string Student_Number;
-		string Role;
-		int clearCount; //달성한 목표 개수
-		int goalCount; //목표 개수
-		vector<Goal> GoalList;
+
+	for (int i = 0; i < membercount; i++) {
+		string Student_Name, Student_Number, Role;
+		int clearCount, goalCount;
 
 		getline(ifs, Student_Name);
 		getline(ifs, Student_Number);
 		getline(ifs, Role);
-		this->addMember(Student_Name, Student_Number, Role);
+
+		teamMember member = teamMember(Student_Name, Student_Number, Role);
 		ifs >> clearCount;
 		ifs.ignore(100, '\n');
 		ifs >> goalCount;
 		ifs.ignore(100, '\n');
-		for (int g = 0; g < goalCount; g++)
-		{
-			Goal goal;
-			string context;	// 세부목표의 내용
+		for (int j = 0; j < goalCount; j++) {
+			string context;
+			int year, month, day, clear;
 
-			int year;
-			int month;
-			int day;
-			int clear;  // 세부목표의 달성 여부
 			getline(ifs, context);
-			this->getMember(m).add_Goal(goal);
-			this->getMember(m).get_Goal(g).set_Context(context);
-			ifs >> year >> month >> day;
-			this->getMember(m).get_Goal(g).set_Deadline(year, month, day);
-			ifs >> clear;
-			this->getMember(m).set_Goal_Clear(g, clear);
+			ifs >> year >> month >> day >> clear;
 			ifs.ignore(100, '\n');
-		}
 
-		this->getMember(m).set_ClearCount(clearCount);
+			member.add_Goal(Goal(context, year, month, day, clear));
+		}
+		member.set_ClearCount(clearCount);
+		this->addMember(member);
 	}
 
 	int schedulecount;
 	ifs >> schedulecount;
 	ifs.ignore(100, '\n');
 
-	for (int s = 0; s < schedulecount; s++)
-	{
+	for (int i = 0; i < schedulecount; i++) {
 		string name;
-		int year;
-		int month;
-		int day;
+		int year, month, day;
 		getline(ifs, name);
 		ifs >> year >> month >> day;
 		ifs.ignore(100, '\n');
@@ -118,49 +105,41 @@ bool Team::load(string filename) // 파일 읽어오기
 
 	ifs.close();
 	return true;
-
 }
 
-bool Team::save(string filename) // 파일 저장하기
+bool Team::save(const string& filename) // 파일 저장하기
 {
 	ofstream ofs;
-
 	ofs.open(filename);
 
 	if (!ofs.good())
 		return false;
 
-	ofs << this->getMemberCnt() << endl;
-	for (int m = 0; m < this->getMemberCnt(); m++)
-	{
-		ofs << member[m].get_Name() << endl;
-		ofs << member[m].get_Number() << endl;
-		ofs << member[m].get_Role() << endl;
-		ofs << member[m].get_ClearCount() << endl;
-		ofs << member[m].get_GoalCount() << endl;
+	int membercnt = this->getMemberCnt();
+	ofs << membercnt << endl;
 
-		for (int g = 0; g < member[m].get_GoalCount(); g++)
-		{
-			int* deadline = member[m].get_Goal_deadline(g);
+	for (int i = 0; i < membercnt; i++) {
+		teamMember m = members[i];
+		ofs << m.get_Name() << endl;
+		ofs << m.get_Number() << endl;
+		ofs << m.get_Role() << endl;
+		ofs << m.get_ClearCount() << endl;
+		ofs << m.get_GoalCount() << endl;
 
-			ofs << member[m].get_Goal(g).get_Context() << endl;
-			ofs << deadline[0] << " ";
-			ofs << deadline[1] << " ";
-			ofs << deadline[2] << endl;
-
-			int clear = member[m].get_Goal(g).get_Clear();
-			ofs << clear << endl;
+		for (int j = 0; j < m.get_GoalCount(); j++) {
+			int* deadline = m.get_Goal_deadline(j);
+			ofs << m.get_Goal(j).get_Context() << endl;
+			ofs << deadline[0] << " " << deadline[1] << " " << deadline[2] << endl;
+			ofs << (int)m.get_Goal(j).get_Clear() << endl;
 		}
 	}
 
-	ofs << this->getScheduleCnt() << endl;
-	for (int s = 0; s < this->getScheduleCnt(); s++)
-	{
-		ofs << schedules[s].getName() << endl;
-		ofs << schedules[s].getYear() << "  ";
-		ofs << schedules[s].getMonth() << "  ";
-		ofs << schedules[s].getDay() << endl;
-
+	int schedulecnt = this->getScheduleCnt();
+	ofs << schedulecnt << endl;
+	for (int i = 0; i < schedulecnt; i++) {
+		Schedule s = schedules[i];
+		ofs << s.getName() << endl;
+		ofs << s.getYear() << "  "  << s.getMonth() << "  " << s.getDay() << endl;
 	}
 
 	ofs.close();
